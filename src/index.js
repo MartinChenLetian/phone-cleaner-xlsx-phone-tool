@@ -180,15 +180,15 @@ function renderFormHtml() {
           </p>
           <label>
             变量 A（例如：弄）：
-            <input type="text" name="suffixA" placeholder="例如：弄" onkeyup="document.getElementById('nong').innerHTML = this.value;" required />
+            <input type="text" name="suffixA" placeholder="例如：弄" onkeyup="document.getElementById('nong').innerHTML = this.value;console.log("417");" required />
           </label>
           <label>
             变量 B（例如：号）：
-            <input type="text" name="suffixB_road" placeholder="例如：号" onkeyup="document.getElementById('hao').innerHTML = this.value;"required />
+            <input type="text" name="suffixB_road" placeholder="例如：号" onkeyup="document.getElementById('hao').innerHTML = this.value;console.log("21");"required />
           </label>
           <label>
             变量 C（例如：室）：
-            <input type="text" name="suffixC_road" placeholder="例如：室" onkeyup="document.getElementById('shi').innerHTML = this.value;" required />
+            <input type="text" name="suffixC_road" placeholder="例如：室" onkeyup="document.getElementById('shi').innerHTML = this.value;console.log("103");" required />
           </label>
           <p class="tip">
             提交前会自动把这里的 B/C 写回通用字段，后端统一处理。
@@ -204,6 +204,7 @@ function renderFormHtml() {
 
   <script>
     function file() {
+        console.log("Actived file() already!")
         // 检查小区街道名是否填写
         const cacheRInput = document.querySelector('input[name="cacheR"]');
         if (!cacheRInput.value.trim()) {
@@ -212,7 +213,6 @@ function renderFormHtml() {
         } else {
             var R = cacheRInput.value.trim();
             document.getElementById('rx').innerHTML = R;
-            return true;
         }
     } 
     
