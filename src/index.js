@@ -314,22 +314,42 @@ export default {
                 let tail = "";
 
                 if (typeof addrRaw === "string") {
-                    const m = addrRaw.trim().match(pattern);
-                    if (m) {
-                        let [, XXX, YYY, ZZZ, rest] = m;
-                        XXX = (XXX || "").trim();
-                        YYY = (YYY || "").trim();
-                        ZZZ = (ZZZ || "").trim();
-                        tail = (rest || "").trim();
-
-                        if (mode === "community") {
-                            // 小区开头：缓存R + YYY + 变量B + ZZZ + 变量C
-                            generated = `${cacheR}${YYY}${suffixB}${ZZZ}${suffixC}`;
-                        } else {
-                            // 道路开头：缓存R + XXX + 变量A + YYY + 变量B + ZZZ + 变量C
-                            generated = `${cacheR}${XXX}${suffixA}${YYY}${suffixB}${ZZZ}${suffixC}`;
-                        }
+                  const m = addrRaw.trim().match(pattern);
+                  if (m) {
+                    let [, XXX, YYY, ZZZ, rest] = m;
+                    XXX = (XXX || "").trim();
+                    YYY = (YYY || "").trim();
+                    ZZZ = (ZZZ || "").trim();
+                
+                    // ===== 关键新增逻辑：把 ZZZ 拆成「门牌号 + 备注的一部分」 =====
+                    let zRaw = ZZZ;
+                    let door = zRaw;        // 真正的门牌号
+                    let extraRemark = "";   // 从 ZZZ 里拆出来的备注
+                
+                    // 匹配「数字开头 + 其他东西」的情况，例如：102租户 / 104 女 / 302 Z A翠
+                    const mDoor = zRaw.match(/^(\d+)([\s\S]*)$/);
+                    if (mDoor) {
+                      door = mDoor[1];                      // 前面的数字
+                      extraRemark = (mDoor[2] || "").trim(); // 后面的内容当备注
                     }
+                
+                    const restTrim = (rest || "").trim();
+                
+                    // 汇总备注：ZZZ 里多出来的 + 第四段 rest
+                    const remarkParts = [];
+                    if (extraRemark) remarkParts.push(extraRemark);
+                    if (restTrim) remarkParts.push(restTrim);
+                    tail = remarkParts.join(" ");           // tail 就是我们要写到「尾部备注」那一列
+                
+                    // ===== 按新的 door（纯门牌号）来生成地址 =====
+                    if (mode === "community") {
+                      // 小区开头：缓存R + YYY + 变量B + door + 变量C
+                      generated = `${cacheR}${YYY}${suffixB}${door}${suffixC}`;
+                    } else {
+                      // 道路开头：缓存R + XXX + 变量A + YYY + 变量B + door + 变量C
+                      generated = `${cacheR}${XXX}${suffixA}${YYY}${suffixB}${door}${suffixC}`;
+                    }
+                  }
                 }
 
                 out.push([generated, tail, phone1, phone2]);
