@@ -162,7 +162,7 @@ function renderFormHtml() {
           <p>当前模式：小区开头</p>
           <p class="formula">
             生成地址 = <code>
-            <span id="rx">R</span> + 22 + <span id="hao">A</span> + 303 + <span id="shi">B</span> </code>
+            <span id="rx">R</span>  22  <span id="hao">A</span>  303  <span id="shi">B</span> </code>
           </p>
           <label>
             变量 B（例如：号）：
@@ -178,7 +178,7 @@ function renderFormHtml() {
           <p>当前模式：道路开头</p>
           <p class="formula">
             生成地址 = <code>
-            <span id="rx">R</span> + 400 + <span id="nong2">A</span> + 22 + <span id="hao2">B</span> + 303 + <span id="shi2">C</span> </code>
+            <span id="rx">R</span>  400  <span id="nong2">A</span>  22  <span id="hao2">B</span>  303  <span id="shi2">C</span> </code>
           </p>
           <label>
             变量 A（例如：弄）：
