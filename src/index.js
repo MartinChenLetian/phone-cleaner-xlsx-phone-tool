@@ -129,7 +129,7 @@ function renderFormHtml() {
           <input
             type="text"
             name="cacheR"
-            onkeyup="const cacheRInput = document.querySelector('input[name="cacheR"]');var R = cacheRInput.value.trim();document.getElementById('rx').innerHtml = R;"
+            onkeyup="cR()"
             required
             placeholder="例如：甘泉二村 / 环镇北路"
           />
@@ -205,6 +205,10 @@ function renderFormHtml() {
   </div>
 
   <script>
+    function cR(){
+        const cacheRInput = document.querySelector('input[name="cacheR"]');var R = cacheRInput.value.trim();document.getElementById('rx').innerHtml = R;
+    }
+  
     const modeRadios = document.querySelectorAll('input[name="mode"]');
     const communityOptions = document.getElementById('community-options');
     const roadOptions = document.getElementById('road-options');
