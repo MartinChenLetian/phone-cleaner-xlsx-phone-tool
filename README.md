@@ -22,3 +22,14 @@
 ```bash
 npm install
 npm start
+```
+
+## Github Commit
+
+```bash
+git add .
+git commit -m "更新详情信息"
+git push origin main
+```
+
+## The End ##
