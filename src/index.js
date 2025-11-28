@@ -129,6 +129,7 @@ function renderFormHtml() {
           <input
             type="text"
             name="cacheR"
+            onkeyup="const cacheRInput = document.querySelector('input[name="cacheR"]');var R = cacheRInput.value.trim();document.getElementById('rx').innerHtml = R;"
             required
             placeholder="例如：甘泉二村 / 环镇北路"
           />
@@ -161,7 +162,7 @@ function renderFormHtml() {
           <p>当前模式：小区开头</p>
           <p class="formula">
             生成地址 = <code>
-            <span id="rx"></span> + 22 + <span id="hao"></span> + 303 + <span id="shi"></span> </code>
+            <span id="rx">R</span> + 22 + <span id="hao">A</span> + 303 + <span id="shi">B</span> </code>
           </p>
           <label>
             变量 B（例如：号）：
@@ -177,7 +178,7 @@ function renderFormHtml() {
           <p>当前模式：道路开头</p>
           <p class="formula">
             生成地址 = <code>
-            <span id="rx2"></span> + 400 + <span id="nong2"></span> + 22 + <span id="hao2"></span> + 303 + <span id="shi2"></span> </code>
+            <span id="rx">R</span> + 400 + <span id="nong2">A</span> + 22 + <span id="hao2">B</span> + 303 + <span id="shi2">C</span> </code>
           </p>
           <label>
             变量 A（例如：弄）：
@@ -204,21 +205,6 @@ function renderFormHtml() {
   </div>
 
   <script>
-    function FileClicked() {
-        console.log("Actived file() already!")
-        // 检查小区街道名是否填写
-        const cacheRInput = document.querySelector('input[name="cacheR"]');
-        if (!cacheRInput.value.trim()) {
-            alert('请先填写街道 / 小区名');
-            return false;
-        } else {
-            var R = cacheRInput.value.trim();
-            document.getElementById('rx').innerHtml = R;
-            document.getElementById('rx2').innerHtml = R;
-            cacheRInput.disabled = true;
-        }
-    } 
-    
     const modeRadios = document.querySelectorAll('input[name="mode"]');
     const communityOptions = document.getElementById('community-options');
     const roadOptions = document.getElementById('road-options');
