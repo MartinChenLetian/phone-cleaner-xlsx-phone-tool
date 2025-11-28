@@ -165,11 +165,11 @@ function renderFormHtml() {
           </p>
           <label>
             变量 B（例如：号）：
-            <input type="text" name="suffixB" placeholder="例如：号" onkeyup="document.getElementById('hao').innerHTML = this.value;console.log("21");" required/>
+            <input type="text" name="suffixB" placeholder="例如：号" onkeyup="document.getElementById('hao').innerHTML = this.value;console.log('21');" required/>
           </label>
           <label>
             变量 C（例如：室）：
-            <input type="text" name="suffixC" placeholder="例如：室" onkeyup="document.getElementById('shi').innerHTML = this.value;console.log("103");" required/>
+            <input type="text" name="suffixC" placeholder="例如：室" onkeyup="document.getElementById('shi').innerHTML = this.value;console.log('103');" required/>
           </label>
         </div>
 
@@ -181,15 +181,15 @@ function renderFormHtml() {
           </p>
           <label>
             变量 A（例如：弄）：
-            <input type="text" name="suffixA" placeholder="例如：弄" onkeyup="document.getElementById('nong2').innerHTML = this.value;console.log("417");" required />
+            <input type="text" name="suffixA" placeholder="例如：弄" onkeyup="document.getElementById('nong2').innerHTML = this.value;console.log('417');" required />
           </label>
           <label>
             变量 B（例如：号）：
-            <input type="text" name="suffixB_road" placeholder="例如：号" onkeyup="document.getElementById('hao2').innerHTML = this.value;console.log("21");" required />
+            <input type="text" name="suffixB_road" placeholder="例如：号" onkeyup="document.getElementById('hao2').innerHTML = this.value;console.log('21');" required />
           </label>
           <label>
             变量 C（例如：室）：
-            <input type="text" name="suffixC_road" placeholder="例如：室" onkeyup="document.getElementById('shi2').innerHTML = this.value;console.log("103");" required />
+            <input type="text" name="suffixC_road" placeholder="例如：室" onkeyup="document.getElementById('shi2').innerHTML = this.value;console.log('103');" required />
           </label>
           <p class="tip">
             提交前会自动把这里的 B/C 写回通用字段，后端统一处理。
@@ -213,9 +213,9 @@ function renderFormHtml() {
             return false;
         } else {
             var R = cacheRInput.value.trim();
-            document.getElementById('rx').innerHTML = R;
+            document.getElementById('rx').innerHtml = R;
             document.getElementById('rx2').innerHtml = R;
-            cacheRInput.disable = true;
+            cacheRInput.disabled = true;
         }
     } 
     
