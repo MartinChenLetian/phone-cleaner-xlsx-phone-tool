@@ -140,7 +140,7 @@ function renderFormHtml() {
         <legend>步骤 2：上传原始电话表（.xlsx）</legend>
         <label>
           请选择文件（第一张表：A=地址，B=电话1，C=电话2）：
-          <input type="file" name="file" accept=".xlsx" onclick="FileClicked()" required />
+          <input type="file" name="file" accept=".xlsx" required />
         </label>
       </fieldset>
 
