@@ -139,7 +139,7 @@ function renderFormHtml() {
         <legend>步骤 2：上传原始电话表（.xlsx）</legend>
         <label>
           请选择文件（第一张表：A=地址，B=电话1，C=电话2）：
-          <input type="file" name="file" accept=".xlsx" onclick="file()" required />
+          <input type="file" name="file" accept=".xlsx" onclick="FileClicked()" required />
         </label>
       </fieldset>
 
@@ -160,15 +160,16 @@ function renderFormHtml() {
         <div id="community-options" class="options">
           <p>当前模式：小区开头</p>
           <p class="formula">
-            生成地址 = <code>缓存R + YYY + 变量B + ZZZ + 变量C</code>
+            生成地址 = <code>
+            <span id="rx"></span> + 22 + <span id="hao"></span> + 303 + <span id="shi"></span> </code>
           </p>
           <label>
             变量 B（例如：号）：
-            <input type="text" name="suffixB" placeholder="例如：号" />
+            <input type="text" name="suffixB" placeholder="例如：号" onkeyup="document.getElementById('hao').innerHTML = this.value;console.log("21");" required/>
           </label>
           <label>
             变量 C（例如：室）：
-            <input type="text" name="suffixC" placeholder="例如：室" />
+            <input type="text" name="suffixC" placeholder="例如：室" onkeyup="document.getElementById('shi').innerHTML = this.value;console.log("103");" required/>
           </label>
         </div>
 
@@ -176,19 +177,19 @@ function renderFormHtml() {
           <p>当前模式：道路开头</p>
           <p class="formula">
             生成地址 = <code>
-            <span id="rx"></span> + 400 + <span id="nong"></span> + 22 + <span id="hao"></span> + 303 + <span id="shi"></span> </code>
+            <span id="rx2"></span> + 400 + <span id="nong2"></span> + 22 + <span id="hao2"></span> + 303 + <span id="shi2"></span> </code>
           </p>
           <label>
             变量 A（例如：弄）：
-            <input type="text" name="suffixA" placeholder="例如：弄" onkeyup="document.getElementById('nong').innerHTML = this.value;console.log("417");" required />
+            <input type="text" name="suffixA" placeholder="例如：弄" onkeyup="document.getElementById('nong2').innerHTML = this.value;console.log("417");" required />
           </label>
           <label>
             变量 B（例如：号）：
-            <input type="text" name="suffixB_road" placeholder="例如：号" onkeyup="document.getElementById('hao').innerHTML = this.value;console.log("21");"required />
+            <input type="text" name="suffixB_road" placeholder="例如：号" onkeyup="document.getElementById('hao2').innerHTML = this.value;console.log("21");" required />
           </label>
           <label>
             变量 C（例如：室）：
-            <input type="text" name="suffixC_road" placeholder="例如：室" onkeyup="document.getElementById('shi').innerHTML = this.value;console.log("103");" required />
+            <input type="text" name="suffixC_road" placeholder="例如：室" onkeyup="document.getElementById('shi2').innerHTML = this.value;console.log("103");" required />
           </label>
           <p class="tip">
             提交前会自动把这里的 B/C 写回通用字段，后端统一处理。
@@ -203,7 +204,7 @@ function renderFormHtml() {
   </div>
 
   <script>
-    function file() {
+    function FileClicked() {
         console.log("Actived file() already!")
         // 检查小区街道名是否填写
         const cacheRInput = document.querySelector('input[name="cacheR"]');
@@ -213,6 +214,8 @@ function renderFormHtml() {
         } else {
             var R = cacheRInput.value.trim();
             document.getElementById('rx').innerHTML = R;
+            document.getElementById('rx2').innerHtml = R;
+            cacheRInput.disable = true;
         }
     } 
     
