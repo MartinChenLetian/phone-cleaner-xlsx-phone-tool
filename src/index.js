@@ -7,7 +7,7 @@ function renderFormHtml() {
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>电话表整理小工具（Cloudflare Workers）</title>
+  <title>电话表整理小工具</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
@@ -117,9 +117,8 @@ function renderFormHtml() {
     <h1>电话表整理小工具</h1>
     <p class="desc">
       使用说明：<br/>
-      1. A 列为地址（格式：<code>XXX-YYY-ZZZ</code>，后面可以跟备注）<br/>
+      1. A 列为地址（格式：<code>417-21-103</code>，后面可以跟备注）<br/>
       2. B 列为电话1，C 列为电话2（C 即使为空也会保留）<br/>
-      3. 设置街道 / 小区名（缓存R）和拼接规则后，生成新 Excel。
     </p>
 
     <form id="form" action="/process" method="post" enctype="multipart/form-data">
@@ -140,7 +139,7 @@ function renderFormHtml() {
         <legend>步骤 2：上传原始电话表（.xlsx）</legend>
         <label>
           请选择文件（第一张表：A=地址，B=电话1，C=电话2）：
-          <input type="file" name="file" accept=".xlsx" required />
+          <input type="file" name="file" accept=".xlsx" onclick="file()" required />
         </label>
       </fieldset>
 
@@ -176,19 +175,20 @@ function renderFormHtml() {
         <div id="road-options" class="options hidden">
           <p>当前模式：道路开头</p>
           <p class="formula">
-            生成地址 = <code>缓存R + XXX + 变量A + YYY + 变量B + ZZZ + 变量C</code>
+            生成地址 = <code>
+            <span id="rx"></span> + 400 + <span id="nong"></span> + 22 + <span id="hao"></span> + 303 + <span id="shi"></span> </code>
           </p>
           <label>
             变量 A（例如：弄）：
-            <input type="text" name="suffixA" placeholder="例如：弄" />
+            <input type="text" name="suffixA" placeholder="例如：弄" onkeyup="document.getElementById('nong').innerHTML = this.value;" required />
           </label>
           <label>
             变量 B（例如：号）：
-            <input type="text" name="suffixB_road" placeholder="例如：号" />
+            <input type="text" name="suffixB_road" placeholder="例如：号" onkeyup="document.getElementById('hao').innerHTML = this.value;"required />
           </label>
           <label>
             变量 C（例如：室）：
-            <input type="text" name="suffixC_road" placeholder="例如：室" />
+            <input type="text" name="suffixC_road" placeholder="例如：室" onkeyup="document.getElementById('shi').innerHTML = this.value;" required />
           </label>
           <p class="tip">
             提交前会自动把这里的 B/C 写回通用字段，后端统一处理。
@@ -199,10 +199,23 @@ function renderFormHtml() {
       <button type="submit" class="submit-btn">开始整理并下载结果</button>
     </form>
 
-    <p class="footer">整理员专用小工具 · Cloudflare Workers 版</p>
+    <p class="footer">手机号整理专用小工具 · Cloudflare Workers 陈乐天发布专属尊贵版</p>
   </div>
 
   <script>
+    function file() {
+        // 检查小区街道名是否填写
+        const cacheRInput = document.querySelector('input[name="cacheR"]');
+        if (!cacheRInput.value.trim()) {
+            alert('请先填写街道 / 小区名');
+            return false;
+        } else {
+            var R = cacheRInput.value.trim();
+            document.getElementById('rx').innerHTML = R;
+            return true;
+        }
+    } 
+    
     const modeRadios = document.querySelectorAll('input[name="mode"]');
     const communityOptions = document.getElementById('community-options');
     const roadOptions = document.getElementById('road-options');
@@ -301,7 +314,7 @@ export default {
             const pattern = /^([^-]+)-([^-]+)-([^-]+)(.*)$/;
 
             const out = [];
-            out.push(["生成地址", "尾部备注", "电话1(原B列)", "电话2(原C列)"]);
+            out.push(["地址", "备注", "电话1", "电话2"]);
 
             for (const row of rows) {
                 if (!row || row.length === 0) continue;
@@ -314,42 +327,42 @@ export default {
                 let tail = "";
 
                 if (typeof addrRaw === "string") {
-                  const m = addrRaw.trim().match(pattern);
-                  if (m) {
-                    let [, XXX, YYY, ZZZ, rest] = m;
-                    XXX = (XXX || "").trim();
-                    YYY = (YYY || "").trim();
-                    ZZZ = (ZZZ || "").trim();
-                
-                    // ===== 关键新增逻辑：把 ZZZ 拆成「门牌号 + 备注的一部分」 =====
-                    let zRaw = ZZZ;
-                    let door = zRaw;        // 真正的门牌号
-                    let extraRemark = "";   // 从 ZZZ 里拆出来的备注
-                
-                    // 匹配「数字开头 + 其他东西」的情况，例如：102租户 / 104 女 / 302 Z A翠
-                    const mDoor = zRaw.match(/^(\d+)([\s\S]*)$/);
-                    if (mDoor) {
-                      door = mDoor[1];                      // 前面的数字
-                      extraRemark = (mDoor[2] || "").trim(); // 后面的内容当备注
+                    const m = addrRaw.trim().match(pattern);
+                    if (m) {
+                        let [, XXX, YYY, ZZZ, rest] = m;
+                        XXX = (XXX || "").trim();
+                        YYY = (YYY || "").trim();
+                        ZZZ = (ZZZ || "").trim();
+
+                        // ===== 关键新增逻辑：把 ZZZ 拆成「门牌号 + 备注的一部分」 =====
+                        let zRaw = ZZZ;
+                        let door = zRaw;        // 真正的门牌号
+                        let extraRemark = "";   // 从 ZZZ 里拆出来的备注
+
+                        // 匹配「数字开头 + 其他东西」的情况，例如：102租户 / 104 女 / 302 Z A翠
+                        const mDoor = zRaw.match(/^(\d+)([\s\S]*)$/);
+                        if (mDoor) {
+                            door = mDoor[1];                      // 前面的数字
+                            extraRemark = (mDoor[2] || "").trim(); // 后面的内容当备注
+                        }
+
+                        const restTrim = (rest || "").trim();
+
+                        // 汇总备注：ZZZ 里多出来的 + 第四段 rest
+                        const remarkParts = [];
+                        if (extraRemark) remarkParts.push(extraRemark);
+                        if (restTrim) remarkParts.push(restTrim);
+                        tail = remarkParts.join(" ");           // tail 就是我们要写到「尾部备注」那一列
+
+                        // ===== 按新的 door（纯门牌号）来生成地址 =====
+                        if (mode === "community") {
+                            // 小区开头：缓存R + YYY + 变量B + door + 变量C
+                            generated = `${cacheR}${YYY}${suffixB}${door}${suffixC}`;
+                        } else {
+                            // 道路开头：缓存R + XXX + 变量A + YYY + 变量B + door + 变量C
+                            generated = `${cacheR}${XXX}${suffixA}${YYY}${suffixB}${door}${suffixC}`;
+                        }
                     }
-                
-                    const restTrim = (rest || "").trim();
-                
-                    // 汇总备注：ZZZ 里多出来的 + 第四段 rest
-                    const remarkParts = [];
-                    if (extraRemark) remarkParts.push(extraRemark);
-                    if (restTrim) remarkParts.push(restTrim);
-                    tail = remarkParts.join(" ");           // tail 就是我们要写到「尾部备注」那一列
-                
-                    // ===== 按新的 door（纯门牌号）来生成地址 =====
-                    if (mode === "community") {
-                      // 小区开头：缓存R + YYY + 变量B + door + 变量C
-                      generated = `${cacheR}${YYY}${suffixB}${door}${suffixC}`;
-                    } else {
-                      // 道路开头：缓存R + XXX + 变量A + YYY + 变量B + door + 变量C
-                      generated = `${cacheR}${XXX}${suffixA}${YYY}${suffixB}${door}${suffixC}`;
-                    }
-                  }
                 }
 
                 out.push([generated, tail, phone1, phone2]);
@@ -370,7 +383,7 @@ export default {
                     "Content-Type":
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     "Content-Disposition":
-                        'attachment; filename="电话表整理结果.xlsx"'
+                        'attachment; filename="{{ resource R }}.xlsx"'
                 }
             });
         }
