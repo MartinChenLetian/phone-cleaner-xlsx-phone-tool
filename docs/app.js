@@ -45,6 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const suffixBRoad = form.querySelector('input[name="suffixB_road"]');
             const suffixCRoad = form.querySelector('input[name="suffixC_road"]');
 
+            if (
+                !suffixAInput.value.trim() ||
+                !suffixBRoad.value.trim() ||
+                !suffixCRoad.value.trim()
+            ) {
+                alert("道路模式下，变量 A / B / C 不能为空");
+                return;
+            }
+
+
             let suffixBCommon = form.querySelector('input[name="suffixB"]');
             let suffixCCommon = form.querySelector('input[name="suffixC"]');
 
@@ -64,11 +74,20 @@ document.addEventListener("DOMContentLoaded", () => {
             suffixBCommon.value = suffixBRoad.value || '';
             suffixCCommon.value = suffixCRoad.value || '';
             suffixAInput.value = suffixAInput.value || '';
+        } else if (mode === "community") {
+            const suffixBInput = form.querySelector('input[name="suffixB"]');
+            const suffixCInput = form.querySelector('input[name="suffixC"]');
+            if (!suffixBInput.value.trim() || !suffixCInput.value.trim()) {
+                alert("小区模式下，变量 B / C 不能为空");
+                return;
+            }
         }
 
         const suffixA = (form.suffixA && form.suffixA.value) || "";
         const suffixB = (form.suffixB && form.suffixB.value) || "";
         const suffixC = (form.suffixC && form.suffixC.value) || "";
+
+        
 
         const file = fileInput.files[0];
 
