@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const communityOptions = document.getElementById('community-options');
     const roadOptions = document.getElementById('road-options');
 
-    // 和 Worker 页面一样的模式切换逻辑
+    // 模式切换（小区 / 道路）
     modeRadios.forEach((radio) => {
         radio.addEventListener('change', () => {
             if (radio.value === 'community' && radio.checked) {
@@ -39,12 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const mode = document.querySelector('input[name="mode"]:checked').value;
 
-        // 道路模式：把 suffixB_road / suffixC_road 写回通用字段
-        if (mode === "road") {
+        // 手动校验一下变量是否填写
+        if (mode === "community") {
+            const suffixBInput = form.querySelector('input[name="suffixB"]');
+            const suffixCInput = form.querySelector('input[name="suffixC"]');
+            if (!suffixBInput.value.trim() || !suffixCInput.value.trim()) {
+                alert("小区模式下，变量 B / C 不能为空");
+                return;
+            }
+        } else if (mode === "road") {
             const suffixAInput = form.querySelector('input[name="suffixA"]');
             const suffixBRoad = form.querySelector('input[name="suffixB_road"]');
             const suffixCRoad = form.querySelector('input[name="suffixC_road"]');
-
             if (
                 !suffixAInput.value.trim() ||
                 !suffixBRoad.value.trim() ||
@@ -54,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-
+            // 道路模式：把 suffixB_road / suffixC_road 写回通用字段
             let suffixBCommon = form.querySelector('input[name="suffixB"]');
             let suffixCCommon = form.querySelector('input[name="suffixC"]');
 
@@ -74,20 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
             suffixBCommon.value = suffixBRoad.value || '';
             suffixCCommon.value = suffixCRoad.value || '';
             suffixAInput.value = suffixAInput.value || '';
-        } else if (mode === "community") {
-            const suffixBInput = form.querySelector('input[name="suffixB"]');
-            const suffixCInput = form.querySelector('input[name="suffixC"]');
-            if (!suffixBInput.value.trim() || !suffixCInput.value.trim()) {
-                alert("小区模式下，变量 B / C 不能为空");
-                return;
-            }
         }
 
         const suffixA = (form.suffixA && form.suffixA.value) || "";
         const suffixB = (form.suffixB && form.suffixB.value) || "";
         const suffixC = (form.suffixC && form.suffixC.value) || "";
-
-        
 
         const file = fileInput.files[0];
 
@@ -100,7 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
             const out = [];
-            out.push(["地址", "备注", "电话1", "电话2"]);
+            // ✅ 这里改成三列电话
+            out.push(["地址", "备注", "电话1", "电话2", "电话3"]);
 
             for (const row of rows) {
                 if (!row || row.length === 0) continue;
@@ -108,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const addrRaw = row[0];
                 const phone1 = row[1] || "";
                 const phone2 = row[2] || "";
+                const phone3 = row[3] || ""; // ✅ 新增：第三列电话
 
                 let generated = "";
                 let tail = "";
@@ -145,7 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
-                out.push([generated, tail, phone1, phone2]);
+                // ✅ 这里也多加一个 phone3
+                out.push([generated, tail, phone1, phone2, phone3]);
             }
 
             const outBook = XLSX.utils.book_new();
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
             URL.revokeObjectURL(url);
         } catch (err) {
             console.error(err);
-            alert("解析或生成 Excel 时出错，请检查文件格式。");
+            alert("解析或生成 Excel 时出错，请检查文件排版格式。");
         }
     });
 });
