@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>电话表整理小工具</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- 前端版用 CDN 引入 SheetJS -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>电话表整理小工具</h1>
+        <p class="desc">
+            使用说明：<br />
+            1. A 列为地址（格式：<code>417-21-103</code>，后面可以跟备注）<br />
+            2. B 列为电话1，C 列为电话2（C 即使为空也会保留）<br />
+        </p>
+
+        <!-- 静态版 form 不需要 action，提交由 JS 接管 -->
+        <form id="form" enctype="multipart/form-data">
+            <fieldset>
+                <legend>步骤 1：填写街道 / 小区名（缓存R）</legend>
+                <label>
+                    您当前制作的街道 / 小区名是？
+                    <input type="text" name="cacheR" id="cacheR"
+                        onkeyup="document.getElementById('rx').innerHTML = this.value;console.log('乾溪新村');" required
+                        placeholder="例如：甘泉二村 / 环镇北路" />
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>步骤 2：上传原始电话表（.xlsx）</legend>
+                <label>
+                    请选择文件（第一张表：A=地址，B=电话1，C=电话2）：
+                    <input type="file" name="file" id="fileInput" accept=".xlsx" required />
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>步骤 3：生成规则设置</legend>
+                <div class="mode">
+                    <span>生成片段开头：</span>
+                    <label>
+                        <input type="radio" name="mode" value="community" checked />
+                        以 <strong>小区</strong> 开头
+                    </label>
+                    <label>
+                        <input type="radio" name="mode" value="road" />
+                        以 <strong>道路</strong> 开头
+                    </label>
+                </div>
+
+                <div id="community-options" class="options">
+                    <p>当前模式：小区开头</p>
+                    <p class="formula">
+                        生成地址 = <code>
+            <span id="rx">R</span>  22  <span id="hao">A</span>  303  <span id="shi">B</span> </code>
+                    </p>
+                    <label>
+                        变量 B（例如：号）：
+                        <input type="text" name="suffixB" placeholder="例如：号"
+                            onkeyup="document.getElementById('hao').innerHTML = this.value;console.log('21');"
+                            required />
+                    </label>
+                    <label>
+                        变量 C（例如：室）：
+                        <input type="text" name="suffixC" placeholder="例如：室"
+                            onkeyup="document.getElementById('shi').innerHTML = this.value;console.log('103');"
+                            required />
+                    </label>
+                </div>
+
+                <div id="road-options" class="options hidden">
+                    <p>当前模式：道路开头</p>
+                    <p class="formula">
+                        生成地址 = <code>
+            <span id="rx">R</span>  400  <span id="nong2">A</span>  22  <span id="hao2">B</span>  303  <span id="shi2">C</span> </code>
+                    </p>
+                    <label>
+                        变量 A（例如：弄）：
+                        <input type="text" name="suffixA" placeholder="例如：弄"
+                            onkeyup="document.getElementById('nong2').innerHTML = this.value;console.log('417');"
+                            required />
+                    </label>
+                    <label>
+                        变量 B（例如：号）：
+                        <input type="text" name="suffixB_road" placeholder="例如：号"
+                            onkeyup="document.getElementById('hao2').innerHTML = this.value;console.log('21');"
+                            required />
+                    </label>
+                    <label>
+                        变量 C（例如：室）：
+                        <input type="text" name="suffixC_road" placeholder="例如：室"
+                            onkeyup="document.getElementById('shi2').innerHTML = this.value;console.log('103');"
+                            required />
+                    </label>
+                    <p class="tip">
+                        提交前会自动把这里的 B/C 写回通用字段，前端统一处理。
+                    </p>
+                </div>
+            </fieldset>
+
+            <button type="submit" class="submit-btn">开始整理并下载结果</button>
+        </form>
+
+        <p class="footer">手机号整理专用小工具 · GitHub Pages 版</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
