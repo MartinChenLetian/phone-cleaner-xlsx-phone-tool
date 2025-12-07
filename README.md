@@ -32,4 +32,4 @@ git commit -m "更新详情信息"
 git push origin main
 ```
 
-## The End ##
+## The End ### Comprehension
